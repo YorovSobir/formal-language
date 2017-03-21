@@ -1,5 +1,4 @@
 CC=gcc
-script=make_test.sh
 
 all: main
 

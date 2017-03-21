@@ -8,6 +8,7 @@
     int literal_count = 0;
     int ident_count = 0;
     int comment_count = 0;
+    int operator_count = 0;
 %}
 
 CR                  \n
@@ -60,6 +61,7 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
             pos += 1;
         }
 {Op}      {
+            ++operator_count;
             yytext[yyleng] = (char) 0;
             if (yyleng > 1) {
                 if (strcmp(yytext, "==") == 0) {
@@ -145,9 +147,10 @@ int main(void) {
     yylex();
     printf("\n=====================================\nresult:\n"
            "newline = %d\nkeyword-count = %d\nliteral-count = %d"
-           "\nidentificator-count = %d\ncomment-count = %d\n"
+           "\nidentificator-count = %d\noperator-count = %d"
+           "\ncomment-count = %d\n"
            "=======================================\n",
            line_number, keyword_count, literal_count,
-            ident_count, comment_count);
+            ident_count, operator_count, comment_count);
     return 0;
 }
