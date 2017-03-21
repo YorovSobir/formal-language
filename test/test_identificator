@@ -1,0 +1,10 @@
+read reader;
+write writer;
+
+if ( _if > 1000) then write if_if;
+else read if_then;
+write begin_end;
+while (while_1 > 0)
+begin
+    write while_begin
+end

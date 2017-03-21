@@ -1,0 +1,8 @@
+read                    x;
+//  write              x
+if      (       y  >    1)
+
+then
+
+
+write y

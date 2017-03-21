@@ -1,0 +1,11 @@
+read x; x = x + 1;
+if (x >= 2) then y = x / 2;
+else
+begin
+    if (y == 100) then y = y % 2;
+    if (y > 100) then y = y * 2;
+    if (y < 100) then y = y - 10;
+    if (x != 1) then x = x * 2;
+    if (x == 1 && y == 5) then y = x
+    if (x == 1 || y <= 2) then y = x * 2 - 1;
+end;

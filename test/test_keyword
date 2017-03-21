@@ -1,0 +1,14 @@
+read x;
+write x;
+if (x > 10) then
+begin
+    while (x > 1)
+    begin
+        write x;
+        x = x + 1;
+    end
+end
+else do
+begin
+    // it's too comment
+end
