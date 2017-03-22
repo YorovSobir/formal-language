@@ -9,6 +9,9 @@
     int ident_count = 0;
     int comment_count = 0;
     int operator_count = 0;
+    int is_delim(char ch);
+    char delimiter[] = "(); \n\r";
+    int delimiter_size = 6;
 %}
 
 CR                  \n
@@ -28,8 +31,9 @@ Comment             \/\/.*$
 
 %%
 {Comment}   {
+                yytext[yyleng] = (char) 0;
                 ++comment_count;
-                printf("Comment(%d, %d, %ld); ", line_number, pos, pos + yyleng - 1);
+                printf("Comment(%s, %d, %d, %ld); ", &yytext[2], line_number, pos, pos + yyleng - 1);
                 pos += yyleng;
             }
 
@@ -122,10 +126,18 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
         }
 
 {Num}     {
-            ++literal_count;
+            char ch = input();
+            unput(ch);
             yytext[yyleng] = (char) 0;
-            printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
-            pos += yyleng;
+            if (is_delim(ch) == 1) {
+                ++literal_count;
+                printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
+                pos += yyleng;
+            } else {
+                printf("\nwrong format of number: %s%c\n", yytext, ch);
+                return -1;
+            }
+
         }
 
 "("       {
@@ -137,14 +149,34 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
             pos += 1;
           }
 
-({SP}|{HT}|{FF})        ;
+({SP}|{HT}|{FF})        {++pos;}
 
 ({CR}|{LF}|{CRLF})      {++line_number; ++pos; ;}
-.       ++pos;
+.           {
+                printf("unknown character: %c", yytext[0]);
+                return -1;
+            }
 %%
 
+int is_delim(char ch) {
+    for (int i = 0; i < delimiter_size; ++i) {
+        if (delimiter[i] == ch) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int main(void) {
-    yylex();
+    int res = yylex();
+
+    if (res == -1) {
+        printf("\n=======================================\n"
+                "please fix above error and try again!\n"
+                "=========================================\n");
+        return 0;
+    }
+
     printf("\n=====================================\nresult:\n"
            "newline = %d\nkeyword-count = %d\nliteral-count = %d"
            "\nidentificator-count = %d\noperator-count = %d"
