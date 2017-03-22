@@ -134,7 +134,7 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
                 printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
                 pos += yyleng;
             } else {
-                printf("\nwrong format of number: %s%c\n", yytext, ch);
+                printf("\nwrong format of number: %s%c\nline = %d pos = %d", yytext, ch, line_number, pos);
                 return -1;
             }
 
@@ -153,7 +153,7 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
 
 ({CR}|{LF}|{CRLF})      {++line_number; ++pos; ;}
 .           {
-                printf("unknown character: %c", yytext[0]);
+                printf("unknown character: %c\nline = %d pos = %d", yytext[0], line_number, pos);
                 return -1;
             }
 %%
