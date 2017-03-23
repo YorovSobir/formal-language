@@ -126,18 +126,10 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
         }
 
 {Num}     {
-            char ch = input();
-            unput(ch);
             yytext[yyleng] = (char) 0;
-            if (is_delim(ch) == 1) {
-                ++literal_count;
-                printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
-                pos += yyleng;
-            } else {
-                printf("\nwrong format of number: %s%c\nline = %d pos = %d", yytext, ch, line_number, pos);
-                return -1;
-            }
-
+            ++literal_count;
+            printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
+            pos += yyleng;
         }
 
 "("       {
@@ -157,15 +149,6 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
                 return -1;
             }
 %%
-
-int is_delim(char ch) {
-    for (int i = 0; i < delimiter_size; ++i) {
-        if (delimiter[i] == ch) {
-            return 1;
-        }
-    }
-    return 0;
-}
 
 int main(void) {
     int res = yylex();

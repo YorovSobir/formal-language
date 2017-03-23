@@ -9,5 +9,5 @@ then
 else
     begin
         read x
-        if (x == true) then x = false
+        if (x == true) then x != false
     end
