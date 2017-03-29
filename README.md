@@ -9,7 +9,7 @@
 ## How to build project
 1. Change current directory to project's root directory (where Makefile is).
 2. run **make**.
-3. Now to run project we must run laxer from build/ directory.
+3. Now to run project we must run laxer from build/ directory. Also you can run lexer with **-filter** option to filter comment.
    * ./build/lexer - running without parameter, then you must write some code in language which specified in lexer. lexer return     list of lexem.
     * ./build/lexer < \<file\> - lexer read code from \<file\> and return list of lexem
 
