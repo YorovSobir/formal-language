@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 
 all: main
 
@@ -11,8 +11,11 @@ c_file: build
 build:
 	mkdir build
 
-test_all: main
+test: main
 	bash src/run_test.sh
+
+test_with_filter: main
+	bash src/run_test_with_filter.sh
 
 clean:
 	rm -rf build/*

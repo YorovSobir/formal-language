@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
     #include <string.h>
+    using namespace std;
 
     int line_number = 0;
     int pos = 0;
@@ -9,9 +10,8 @@
     int ident_count = 0;
     int comment_count = 0;
     int operator_count = 0;
-    int is_delim(char ch);
-    char delimiter[] = "(); \n\r";
-    int delimiter_size = 6;
+    bool filter = false;
+
 %}
 
 CR                  \n
@@ -21,7 +21,7 @@ SP                  [ ]
 HT                  \t
 FF                  \f
 Ident               [a-zA-Z\_]+[a-zA-Z0-9\_]*
-Op                  [\+\-\*\/\%><]|==|!=|>=|<=|&&|\|\|
+Op                  [\+\-\*\/\%><]|==|!=|>=|<=|&&|\|\||:=|\*\*
 Bool_lit            ("true"|"false")
 integer             \-?(0|[1-9][0-9]*(e[\+\-]?[0-9]*)?)
 double_with_int     \-?(0|([1-9][0-9]*))\.[0-9]*(e[\+\-]?[0-9]*)?
@@ -31,9 +31,11 @@ Comment             \/\/.*$
 
 %%
 {Comment}   {
-                yytext[yyleng] = (char) 0;
-                ++comment_count;
-                printf("Comment(%s, %d, %d, %ld); ", &yytext[2], line_number, pos, pos + yyleng - 1);
+                if (!filter) {
+                    yytext[yyleng] = (char) 0;
+                    ++comment_count;
+                    printf("Comment(%s, %d, %d, %ld); ", &yytext[2], line_number, pos, pos + yyleng - 1);
+                }
                 pos += yyleng;
             }
 
@@ -64,6 +66,7 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
             printf("Colon(%d, %d, %d); ", line_number, pos, pos);
             pos += 1;
         }
+
 {Op}      {
             ++operator_count;
             yytext[yyleng] = (char) 0;
@@ -90,6 +93,14 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
                 }
                 if (strcmp(yytext, "||") == 0) {
                     printf("Op(Or, %d, %d, %d); ", line_number, pos, pos + 1);
+                    pos += 2;
+                }
+                if (strcmp(yytext, ":=") == 0) {
+                    printf("Op(Assignment, %d, %d, %d); ", line_number, pos, pos + 1);
+                    pos += 2;
+                }
+                if (strcmp(yytext, "**") == 0) {
+                    printf("Op(Pow, %d, %d, %d); ", line_number, pos, pos + 1);
                     pos += 2;
                 }
             } else {
@@ -150,7 +161,13 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
             }
 %%
 
-int main(void) {
+int main(int args, char** argv) {
+    for (int i = 1; i < args; ++i) {
+        if (strncmp(argv[i], "-filter", 7) == 0) {
+            filter = true;
+        }
+    }
+
     int res = yylex();
 
     if (res == -1) {

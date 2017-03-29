@@ -15,7 +15,7 @@
 
 ## if you want run tests
 1. do first step from manual above.
-2. run **make test\_all**. lexer running and read \<test_file\> from _test/_ directory. For all file in this directory lexer write result to console. Result include the number of lines, identificator, keyword, literal, comment, operator.
+2. if you want to run test with option **-filter** you must run **make test\_with\_filter**, otherwise run **make test**. lexer running and read \<test_file\> from _test/_ directory. For all file in this directory lexer write result to console. Result include the number of lines, identificator, keyword, literal, comment, operator.
 
 ## Rebuild
 **make clean && make** - clean directory and build project again.
