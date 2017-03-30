@@ -18,7 +18,7 @@
 2. if you want to run test with option **-filter** you must run **make test\_with\_filter**, otherwise run **make test**. lexer running and read \<test_file\> from _test/_ directory. For all file in this directory lexer write result to console. Result include the number of lines, identificator, keyword, literal, comment, operator.
 
 ## Multiline comment
-Lexer recognizes multiline comment. if user doesn't close comment? than lexer tell him position of that comment which didn't close. Format of the error next:
+Lexer recognizes multiline comments. if user doesn't close comment, than lexer tell him position of this comment (where it started). Format of the error next:
 1. **started: (line, pos)**, line - index of line in which comment started, pos - position of first symbol of comment ('(').
 
 ## Rebuild
