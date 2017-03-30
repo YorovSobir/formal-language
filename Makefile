@@ -1,9 +1,10 @@
 CC=g++
+STANDART=c++11
 
 all: main
 
 main: c_file
-	${CC} build/lexer.c -o build/lexer -ll
+	${CC} -std="${STANDART}" build/lexer.c -o build/lexer -ll
 
 c_file: build
 	lex -o build/lexer.c src/lex.l

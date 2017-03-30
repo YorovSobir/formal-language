@@ -1,0 +1,10 @@
+(* unclosed comment
+    (* it's correct comment
+    *)
+    (* it's unclosed comment
+        (*sadasdasdasdadsasdasdasd
+        *)
+
+    (* too right comment
+    *)
+    (* another unclosed

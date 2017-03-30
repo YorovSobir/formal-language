@@ -1,7 +1,8 @@
 %{
     #include <stdio.h>
-    #include <string.h>
-    using namespace std;
+    #include <string>
+    #include <stack>
+    #include <utility>
 
     int line_number = 0;
     int pos = 0;
@@ -28,6 +29,7 @@ double_with_int     \-?(0|([1-9][0-9]*))\.[0-9]*(e[\+\-]?[0-9]*)?
 double_without_int  \-?\.[0-9]+(e[\+\-]?[0-9]*)?
 Num                 ({integer}|{double_with_int}|{double_without_int})
 Comment             \/\/.*$
+MLComment           \(\*
 
 %%
 {Comment}   {
@@ -37,6 +39,53 @@ Comment             \/\/.*$
                     printf("Comment(%s, %d, %d, %ld); ", &yytext[2], line_number, pos, pos + yyleng - 1);
                 }
                 pos += yyleng;
+            }
+
+{MLComment} {
+                int len = 2;
+                std::string mlcomment = "(*";
+                char c;
+                char pred = -1;
+                int count = 1;
+                int start_line = line_number;
+                std::stack<std::pair<int, int>> comment;
+                comment.push(std::make_pair(line_number, pos));
+                while(count != 0) {
+                    c = yyinput();
+                    ++len;
+                    if (c == -1) {
+                        pos += len;
+                        printf("\n%s\n", mlcomment.c_str());
+                        printf("Error unclosed comments:\n");
+                        while (!comment.empty()) {
+                            auto p = comment.top();
+                            comment.pop();
+                            printf("started: (%d, %d)\n", p.first, p.second);
+                        }
+                        return -1;
+                    }
+                    mlcomment.push_back(c);
+                    if (c == '*') {
+                        if (pred == '(') {
+                            comment.push(std::make_pair(line_number, pos + len - 1));
+                            ++count;
+                            pred = -1;
+                            continue;
+                        }
+                    }
+                    if (c == ')') {
+                        if (pred == '*'){
+                            comment.pop();
+                            --count;
+                        }
+                    }
+                    if (c == '\n') {
+                        ++line_number;
+                    }
+                    pred = c;
+                }
+                printf("MLComment(%s, (%d, %d), (%d, %d)); ", mlcomment.c_str(), start_line, line_number, pos, pos + len - 1);
+                pos += len;
             }
 
 if      {++keyword_count; printf("KW_If(%d, %d, %d); ", line_number, pos, pos + 1); pos += 2;}
