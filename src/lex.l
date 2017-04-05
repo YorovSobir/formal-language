@@ -55,14 +55,18 @@ MLComment           \(\*
                     ++len;
                     if (c == -1) {
                         pos += len;
-                        printf("\n%s\n", mlcomment.c_str());
-                        printf("Error unclosed comments:\n");
-                        while (!comment.empty()) {
-                            auto p = comment.top();
-                            comment.pop();
-                            printf("started: (%d, %d)\n", p.first, p.second);
+                        if (!filter) {
+                            printf("\n%s\n", mlcomment.c_str());
+                            printf("Error unclosed comments:\n");
+                            while (!comment.empty()) {
+                                auto p = comment.top();
+                                comment.pop();
+                                printf("started: (%d, %d)\n", p.first, p.second);
+                            }
+                            return -1;
+                        } else {
+                            break;
                         }
-                        return -1;
                     }
                     mlcomment.push_back(c);
                     if (c == '*') {
@@ -84,7 +88,9 @@ MLComment           \(\*
                     }
                     pred = c;
                 }
-                printf("MLComment(%s, (%d, %d), (%d, %d)); ", mlcomment.c_str(), start_line, line_number, pos, pos + len - 1);
+                if (!filter) {
+                    printf("MLComment(%s, (%d, %d), (%d, %d)); ", mlcomment.c_str(), start_line, line_number, pos, pos + len - 1);
+                }
                 pos += len;
             }
 
