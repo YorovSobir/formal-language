@@ -1,6 +1,0 @@
-read x
-write x // it's comment
-// read inside comment
-if (x > 1) then // comment after if
-// newline comment
-while // - minus inside comment
