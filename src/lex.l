@@ -3,6 +3,8 @@
     #include <string>
     #include <stack>
     #include <utility>
+    #include "y.tab.h"
+    #include "src/parser.h"
 
     int line_number = 0;
     int pos = 0;
@@ -94,32 +96,98 @@ MLComment           \(\*
                 pos += len;
             }
 
-if      {++keyword_count; printf("KW_If(%d, %d, %d); ", line_number, pos, pos + 1); pos += 2;}
-then    {++keyword_count; printf("KW_Then(%d, %d, %d); ", line_number, pos, pos + 3); pos += 4;}
-else    {++keyword_count; printf("KW_Else(%d, %d, %d); ", line_number, pos, pos + 3); pos += 4;}
-while   {++keyword_count; printf("KW_While(%d, %d, %d); ", line_number, pos, pos + 4); pos += 5;}
-do      {++keyword_count; printf("KW_Do(%d, %d, %d); ", line_number, pos, pos + 1); pos += 2;}
-read    {++keyword_count; printf("KW_Read(%d, %d, %d); ", line_number, pos, pos + 3); pos += 4;}
-write   {++keyword_count; printf("KW_Write(%d, %d, %d); ", line_number, pos, pos + 4); pos += 5;}
-begin   {++keyword_count; printf("KW_Begin(%d, %d, %d); ", line_number, pos, pos + 4); pos += 5;}
-end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos + 2); pos += 3;}
+if      {
+            return IF;
+            /*
+                ++keyword_count;
+                printf("KW_If(%d, %d, %d); ", line_number, pos, pos + 1);
+                pos += 2;
+            */
+        }
+then    {
+            return THEN;
+            /*
+                ++keyword_count;
+                printf("KW_Then(%d, %d, %d); ", line_number, pos, pos + 3);
+                pos += 4;
+            */
+        }
+else    {
+            return ELSE;
+            /*
+                ++keyword_count; printf("KW_Else(%d, %d, %d); ", line_number, pos, pos + 3);
+                pos += 4;
+            */
+        }
+while   {
+            return WHILE;
+            /*
+                ++keyword_count;
+                printf("KW_While(%d, %d, %d); ", line_number, pos, pos + 4);
+                pos += 5;
+            */
+        }
+do      {
+            return DO;
+            /*
+                ++keyword_count;
+                printf("KW_Do(%d, %d, %d); ", line_number, pos, pos + 1);
+                pos += 2;
+            */
+        }
+read    {
+            return READ;
+            /*
+                ++keyword_count;
+                printf("KW_Read(%d, %d, %d); ", line_number, pos, pos + 3);
+                pos += 4;
+            */
+        }
+write   {
+            return WRITE;
+            /*
+                ++keyword_count;
+                printf("KW_Write(%d, %d, %d); ", line_number, pos, pos + 4);
+                pos += 5;
+            */
+        }
+begin   {
+            return BEGIN_;
+            /*
+                ++keyword_count;
+                printf("KW_Begin(%d, %d, %d); ", line_number, pos, pos + 4);
+                pos += 5;
+            */
+        }
+end     {
+            return END;
+            /*
+                ++keyword_count;
+                printf("KW_End(%d, %d, %d); ", line_number, pos, pos + 2);
+                pos += 3;
+            */
+        }
 
-{Bool_lit}   {
-                ++literal_count;
-                yytext[yyleng] = (char) 0;
-                printf("Boolean(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
-                pos += yyleng;
-            }
 {Ident}     {
-                ++ident_count;
                 yytext[yyleng] = (char) 0;
-                printf("Ident(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
-                pos += yyleng;
+                char* buf = new char[yyleng];
+                strcpy(buf, yytext);
+                yylval.id = buf;
+                return IDENT;
+                /*
+                    ++ident_count;
+                    yytext[yyleng] = (char) 0;
+                    printf("Ident(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
+                    pos += yyleng;
+                */
             }
 
 ";"     {
-            printf("Colon(%d, %d, %d); ", line_number, pos, pos);
-            pos += 1;
+            return COLON;
+            /*
+                printf("Colon(%d, %d, %d); ", line_number, pos, pos);
+                pos += 1;
+            */
         }
 
 {Op}      {
@@ -127,65 +195,107 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
             yytext[yyleng] = (char) 0;
             if (yyleng > 1) {
                 if (strcmp(yytext, "==") == 0) {
-                    printf("Op(Eq, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    // printf("Op(Eq, %d, %d, %d); ",
+                    // line_number, pos, pos + 1);
+                    // pos += 2;
+                    return EQ;
                 }
                 if (strcmp(yytext, "!=") == 0) {
-                    printf("Op(Neq, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    // printf("Op(Neq, %d, %d, %d); ",
+                    // line_number, pos, pos + 1);
+                    // pos += 2;
+                    return NEQ;
                 }
                 if (strcmp(yytext, ">=") == 0) {
-                    printf("Op(GE, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    // printf("Op(GE, %d, %d, %d); ",
+                    // line_number, pos, pos + 1);
+                    // pos += 2;
+                    return GE;
                 }
                 if (strcmp(yytext, "<=") == 0) {
-                    printf("Op(LE, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    /*
+                        printf("Op(LE, %d, %d, %d); ", line_number, pos, pos + 1);
+                        pos += 2;
+                    */
+                    return LE;
                 }
                 if (strcmp(yytext, "&&") == 0) {
-                    printf("Op(And, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    /*
+                        printf("Op(And, %d, %d, %d); ", line_number, pos, pos + 1);
+                        pos += 2;
+                    */
+                    return AND;
                 }
                 if (strcmp(yytext, "||") == 0) {
-                    printf("Op(Or, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    /*
+                        printf("Op(Or, %d, %d, %d); ", line_number, pos, pos + 1);
+                        pos += 2;
+                    */
+                    return OR;
                 }
                 if (strcmp(yytext, ":=") == 0) {
-                    printf("Op(Assignment, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    /*
+                        printf("Op(Assignment, %d, %d, %d); ", line_number, pos, pos + 1);
+                        pos += 2;
+                    */
+                    return ASSIGN;
                 }
                 if (strcmp(yytext, "**") == 0) {
-                    printf("Op(Pow, %d, %d, %d); ", line_number, pos, pos + 1);
-                    pos += 2;
+                    /*
+                        printf("Op(Pow, %d, %d, %d); ", line_number, pos, pos + 1);
+                        pos += 2;
+                    */
+                    return POW;
                 }
             } else {
                 if (yytext[0] == '+') {
-                    printf("Op(Plus, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(Plus, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return PLUS;
                 }
                 if (yytext[0] == '-') {
-                    printf("Op(Minus, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(Minus, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return MINUS;
                 }
                 if (yytext[0] == '/') {
-                    printf("Op(Div, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(Div, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return DIVIDE;
                 }
                 if (yytext[0] == '*') {
-                    printf("Op(Mul, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(Mul, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return MULT;
                 }
                 if (yytext[0] == '%') {
-                    printf("Op(Mod, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(Mod, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return MOD;
                 }
                 if (yytext[0] == '>') {
-                    printf("Op(GT, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(GT, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return GT;
                 }
                 if (yytext[0] == '<') {
-                    printf("Op(LT, %d, %d, %d); ", line_number, pos, pos);
-                    pos += 1;
+                    /*
+                        printf("Op(LT, %d, %d, %d); ", line_number, pos, pos);
+                        pos += 1;
+                    */
+                    return LT;
                 }
 
             }
@@ -193,51 +303,68 @@ end     {++keyword_count; printf("KW_End(%d, %d, %d); ", line_number, pos, pos +
 
 {Num}     {
             yytext[yyleng] = (char) 0;
-            ++literal_count;
-            printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
-            pos += yyleng;
+            yylval.num = atof(yytext);
+            return NUM;
+            /*
+                ++literal_count;
+                printf("Num(%s, %d, %d, %ld); ", yytext, line_number, pos, pos + yyleng - 1);
+                pos += yyleng;
+            */
         }
 
 "("       {
-            printf("LBracket(%d, %d, %d); ", line_number, pos, pos);
-            pos += 1;
+            return LBR;
+            /*
+                printf("LBracket(%d, %d, %d); ", line_number, pos, pos);
+                pos += 1;
+            */
           }
 ")"       {
-            printf("RBracket(%d, %d, %d); ", line_number, pos, pos);
-            pos += 1;
+            return RBR;
+            /*
+                printf("RBracket(%d, %d, %d); ", line_number, pos, pos);
+                pos += 1;
+            */
           }
 
-({SP}|{HT}|{FF})        {++pos;}
+({SP}|{HT}|{FF})   {
+                    // ++pos;
+                    }
 
-({CR}|{LF}|{CRLF})      {++line_number; ++pos; ;}
+({CR}|{LF}|{CRLF})  {
+                        return NEWLINE;
+                        // ++line_number; ++pos;
+                    }
 .           {
                 printf("unknown character: %c\nline = %d pos = %d", yytext[0], line_number, pos);
                 return -1;
             }
 %%
 
-int main(int args, char** argv) {
-    for (int i = 1; i < args; ++i) {
-        if (strncmp(argv[i], "-filter", 7) == 0) {
-            filter = true;
+/*
+    int main(int args, char** argv) {
+        for (int i = 1; i < args; ++i) {
+            if (strncmp(argv[i], "-filter", 7) == 0) {
+                filter = true;
+            }
         }
-    }
 
-    int res = yylex();
+        int res = yylex();
 
-    if (res == -1) {
-        printf("\n=======================================\n"
-                "please fix above error and try again!\n"
-                "=========================================\n");
+        if (res == -1) {
+            printf("\n=======================================\n"
+                    "please fix above error and try again!\n"
+                    "=========================================\n");
+            return 0;
+        }
+
+        printf("\n=====================================\nresult:\n"
+               "newline = %d\nkeyword-count = %d\nliteral-count = %d"
+               "\nidentificator-count = %d\noperator-count = %d"
+               "\ncomment-count = %d\n"
+               "=======================================\n",
+               line_number, keyword_count, literal_count,
+                ident_count, operator_count, comment_count);
         return 0;
     }
-
-    printf("\n=====================================\nresult:\n"
-           "newline = %d\nkeyword-count = %d\nliteral-count = %d"
-           "\nidentificator-count = %d\noperator-count = %d"
-           "\ncomment-count = %d\n"
-           "=======================================\n",
-           line_number, keyword_count, literal_count,
-            ident_count, operator_count, comment_count);
-    return 0;
-}
+*/
