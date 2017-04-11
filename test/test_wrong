@@ -1,0 +1,6 @@
+if(x == 3) then write(x) else x := x + 1;
+if(x < 3) then
+    begin
+        y := 8;
+        while(y > 3) do y := y - 1
+    // missed end keyword
