@@ -3,5 +3,5 @@ project(formal_language)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp normal_form_chomsky.h)
+set(SOURCE_FILES main.cpp normal_form_chomsky.h cyk_alg.h)
 add_executable(formal_language ${SOURCE_FILES})

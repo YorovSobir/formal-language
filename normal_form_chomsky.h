@@ -72,6 +72,35 @@ struct normal_form_chomsky {
         }
     }
 
+    void normal_form(const char* path) {
+        get_grammar(path);
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        elim_start_term_from_right();
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        replace_term();
+//        std::cout << "after replace term\n";
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        elim_long_rules();
+//        std::cout << "after elim long rules\n";
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        elim_eps_rules();
+//        std::cout << "after elim eps rules\n";
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        elim_unit_rules();
+//        std::cout << "after elim unit rules\n";
+//        print(std::cout);
+//        std::cout << "===============================\n";
+        elim_non_generating();
+//        std::cout << "after elim non generating rules\n";
+//        print(std::cout);
+//        std::cout << "===============================\n";
+    }
+
     void replace_term() {
         for (auto& node: rules) {
             if (node.second.size() < 2) {
@@ -252,7 +281,6 @@ struct normal_form_chomsky {
             }
             ++it;
        }
-       std::cout << "daa";
 
     }
 
@@ -269,6 +297,10 @@ struct normal_form_chomsky {
             }
         }
         return last_non_term.first;
+    }
+
+    std::multimap<std::string, std::vector<std::string>> get_rules() {
+        return rules;
     }
 
     void print(std::ostream& os) {
@@ -288,6 +320,7 @@ struct normal_form_chomsky {
             os.write((node.second + "\n").c_str(), node.second.size() + 1);
         }
     }
+
 private:
     std::multimap<std::string, std::vector<std::string>> rules;
     std::string start_non_term;
