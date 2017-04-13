@@ -28,6 +28,36 @@ std::string trim(const std::string& str) {
 
 struct normal_form_chomsky {
 
+    void normalize(const char* path) {
+        get_grammar(path);
+        std::cout << "original grammar\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        elim_start_term_from_right();
+        std::cout << "after adding new start non-terminal\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        replace_term();
+        std::cout << "after replace term\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        elim_long_rules();
+        std::cout << "after elim long rules\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        elim_eps_rules();
+        std::cout << "after elim eps rules\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        elim_unit_rules();
+        std::cout << "after elim unit rules\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+        elim_non_generating();
+        std::cout << "after elim non generating rules\n";
+        print(std::cout);
+        std::cout << "===============================\n";
+    }
     void get_grammar(const char* path) {
         std::ifstream ifs(path);
         std::string line;
