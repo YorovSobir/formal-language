@@ -33,14 +33,6 @@ struct normal_form_chomsky {
         std::cout << "original grammar\n";
         print(std::cout);
         std::cout << "===============================\n";
-        elim_start_term_from_right();
-        std::cout << "after adding new start non-terminal\n";
-        print(std::cout);
-        std::cout << "===============================\n";
-        replace_term();
-        std::cout << "after replace term\n";
-        print(std::cout);
-        std::cout << "===============================\n";
         elim_long_rules();
         std::cout << "after elim long rules\n";
         print(std::cout);
@@ -57,7 +49,12 @@ struct normal_form_chomsky {
         std::cout << "after elim non generating rules\n";
         print(std::cout);
         std::cout << "===============================\n";
+        replace_term();
+        std::cout << "after replace term\n";
+        print(std::cout);
+        std::cout << "===============================\n";
     }
+
     void get_grammar(const char* path) {
         std::ifstream ifs(path);
         std::string line;
@@ -102,22 +99,6 @@ struct normal_form_chomsky {
         }
     }
 
-    void replace_term() {
-        for (auto& node: rules) {
-            if (node.second.size() < 2) {
-                continue;
-            }
-            for (int i = 0; i < node.second.size(); ++i) {
-                if (node.second[i][0] == '\'') {
-                    std::string non_term = get_next_non_term();
-                    rules.emplace(std::make_pair(non_term,
-                                 std::vector<std::string>{node.second[i]}));
-                    node.second[i] = non_term;
-                }
-            }
-        }
-    }
-
     void elim_long_rules() {
         for (auto p = rules.begin(); p != rules.end();) {
             auto& vec = p->second;
@@ -136,12 +117,6 @@ struct normal_form_chomsky {
             rules.emplace(std::make_pair(key, std::vector<std::string>{vec[i], vec[i + 1]}));
             p = rules.erase(p);
         }
-    }
-
-    void elim_start_term_from_right() {
-        rules.emplace(std::make_pair(start_non_term + "0",
-                                     std::vector<std::string>{start_non_term}));
-        start_non_term += "0";
     }
 
     std::set<std::string> eps_generating() {
@@ -177,6 +152,10 @@ struct normal_form_chomsky {
 
     void elim_eps_rules() {
         std::set<std::string> is_nullable = eps_generating();
+        bool is_start_term_eps = false;
+        if (is_nullable.find(start_non_term) != is_nullable.end()) {
+            is_start_term_eps = true;
+        }
         for (auto& node: rules) {
             if (node.second.size() == 1) {
                 continue;
@@ -200,6 +179,13 @@ struct normal_form_chomsky {
             }
             ++it;
         }
+        if (is_start_term_eps) {
+            rules.emplace(std::make_pair(start_non_term + "0",
+                                         std::vector<std::string>{start_non_term}));
+            rules.emplace(std::make_pair(start_non_term + "0",
+                                         std::vector<std::string>{"eps"}));
+            start_non_term += "0";
+        }
     }
 
     void elim_unit_rules() {
@@ -207,7 +193,8 @@ struct normal_form_chomsky {
         while (true) {
             auto old = unit_rules.size();
             for (auto& node: rules) {
-                if (node.second.size() != 1 || node.second[0][0] == '\'') {
+                if (node.second.size() != 1 || node.second[0][0] == '\''
+                        || node.second[0].compare("eps") == 0) {
                     continue;
                 }
                 auto temp = std::make_pair(node.first, node.second[0]);
@@ -234,7 +221,8 @@ struct normal_form_chomsky {
             }
         }
         for (auto node = rules.begin(); node != rules.end();) {
-            if (node->second.size() != 1 || node->second[0][0] == '\'') {
+            if (node->second.size() != 1 || node->second[0][0] == '\'' ||
+                    node->second[0].compare("eps") == 0) {
                 ++node;
                 continue;
             }
@@ -246,10 +234,16 @@ struct normal_form_chomsky {
     void elim_non_generating() {
        std::set<std::string> generating;
        for (auto& node: rules) {
-           if (node.second.size() != 1 || node.second[0][0] != '\'') {
-               continue;
+           bool is_gen = true;
+           for (auto& term: node.second) {
+                if (term[0] != '\'' && term.compare("eps") != 0) {
+                    is_gen = false;
+                    break;
+                }
            }
-           generating.emplace(node.first);
+           if (is_gen){
+               generating.emplace(node.first);
+           }
        }
        while (true) {
            auto old = generating.size();
@@ -259,7 +253,7 @@ struct normal_form_chomsky {
                }
                bool is_gen = true;
                for (auto& it: node.second) {
-                   if (it[0] == '\'') {
+                   if (it[0] == '\'' || it.compare("eps") == 0) {
                        continue;
                    }
                    if (generating.find(it) == generating.end()) {
@@ -282,12 +276,34 @@ struct normal_form_chomsky {
             }
             ++it;
        }
-       std::cout << "daa";
 
     }
 
+    void replace_term() {
+        std::map<std::string, std::string> new_term;
+        for (auto& node: rules) {
+            if (node.second.size() != 2) {
+                continue;
+            }
+            for (int i = 0; i < node.second.size(); ++i) {
+                if (node.second[i][0] == '\'') {
+                    std::string non_term;
+                    if (new_term.find(node.second[i]) == new_term.end()) {
+                        non_term = get_next_non_term();
+                        new_term.emplace(node.second[i], non_term);
+                        rules.emplace(std::make_pair(non_term,
+                                                     std::vector<std::string>{node.second[i]}));
+                    } else {
+                        non_term = new_term[node.second[i]];
+                    }
+                    node.second[i] = non_term;
+                }
+            }
+        }
+    }
+
     std::string get_next_non_term() {
-        while (rules.find(last_non_term.first) != rules.end()) {
+        do {
             if (last_non_term.second == 9) {
                 last_non_term.first.pop_back();
                 last_non_term.first.back() = static_cast<char>(last_non_term.first.back() + 1);
@@ -297,7 +313,8 @@ struct normal_form_chomsky {
                 last_non_term.second++;
                 last_non_term.first.back() = static_cast<char>(last_non_term.second + '0');
             }
-        }
+        } while (rules.find(last_non_term.first) != rules.end());
+
         return last_non_term.first;
     }
 
@@ -321,7 +338,7 @@ struct normal_form_chomsky {
 private:
     std::multimap<std::string, std::vector<std::string>> rules;
     std::string start_non_term;
-    std::pair<std::string, int> last_non_term = std::make_pair("A0", 0);
+    std::pair<std::string, int> last_non_term = std::make_pair("A0", -1);
 };
 
 #endif //FORMAL_LANGUAGE_NORMAL_FORM_CHOMSKY_H
