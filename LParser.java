@@ -100,12 +100,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterProgram(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitProgram(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitProgram(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -161,12 +158,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterStmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitStmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitStmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -276,12 +270,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_write_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterWrite_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitWrite_stmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitWrite_stmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -322,12 +313,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_read_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterRead_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitRead_stmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitRead_stmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -369,12 +357,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_assign_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterAssign_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitAssign_stmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitAssign_stmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -421,12 +406,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_while_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterWhile_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitWhile_stmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitWhile_stmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -516,12 +498,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_if_stmt; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterIf_stmt(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitIf_stmt(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitIf_stmt(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -677,12 +656,9 @@ public class LParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_exp; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).enterExp(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LListener ) ((LListener)listener).exitExp(this);
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LVisitor ) return ((LVisitor<? extends T>)visitor).visitExp(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 

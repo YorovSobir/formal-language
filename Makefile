@@ -9,7 +9,7 @@ antlr4:
 	curl -O http://www.antlr.org/download/antlr-4.5.3-complete.jar
 
 build:
-	$(antlr4) L.g4
+	$(antlr4) -no-listener -visitor L.g4
 	javac L*.java
 
 run:
