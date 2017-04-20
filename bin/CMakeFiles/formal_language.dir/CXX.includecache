@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/yorov/spbau/formalLanguage/formal-language/src/cyk_alg.h
+normal_form_chomsky.h
+/home/yorov/spbau/formalLanguage/formal-language/src/normal_form_chomsky.h
+
+/home/yorov/spbau/formalLanguage/formal-language/src/main.cpp
+iostream
+-
+normal_form_chomsky.h
+/home/yorov/spbau/formalLanguage/formal-language/src/normal_form_chomsky.h
+cyk_alg.h
+/home/yorov/spbau/formalLanguage/formal-language/src/cyk_alg.h
+
+/home/yorov/spbau/formalLanguage/formal-language/src/normal_form_chomsky.h
+fstream
+-
+string
+-
+iostream
+-
+map
+-
+vector
+-
+list
+-
+queue
+-
+algorithm
+-
+set
+-
+

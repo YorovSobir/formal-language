@@ -55,7 +55,7 @@ struct cyk_alg {
                     continue;
                 }
                 if (node.second[0] == str_vec[i]) {
-                    matrix[i][i].push_back(cell(-1, "", "", node.first));
+                    matrix[i][i].push_back(cell(-1, str_vec[i], "", node.first));
                 }
             }
         }
@@ -73,7 +73,7 @@ struct cyk_alg {
                                 for (auto& node: rules) {
                                     if (node.second == temp) {
                                         matrix[i][j].push_back(
-                                                cell(k, temp[0], temp[1], node.first));
+                                                cell((int)k, temp[0], temp[1], node.first));
                                     }
                                 }
                             }
@@ -92,12 +92,15 @@ struct cyk_alg {
                 break;
             }
         }
-        if (is_derived) {
-            file_name += ".csv";
-            std::cout << "we can derive sentence " << check << " in our grammar\n"
-                      << "see result in " << file_name << std::endl;
-            print(file_name);
+        std::cout << "grammar:\n";
+        nf.print(std::cout);
+        std::cout << "===============================\n";
 
+        if (is_derived) {
+            std::cout << "we can derive sentence " << check << " in our grammar\n"
+                      << "see result in " << file_name << ".csv" << std::endl;
+            print(file_name + ".csv");
+            print_tree(file_name + ".dot");
         } else {
             std::cout << "we cannot derive sentence " << check << " in our grammar\n";
         }
@@ -129,6 +132,47 @@ struct cyk_alg {
             }
             os.write("\n", 1);
         }
+        os.close();
+    }
+
+    void print_tree_node(std::ostream& os, int i, int j,
+                         std::string term, std::string left, std::string right) {
+        if (i < 0 || j < 0) {
+            return;
+        }
+        for (auto& node: matrix[i][j]) {
+            if (node.cur_term == term) {
+                if (node.k == -1) {
+                    continue;
+                }
+                std::string temp;
+                if (term == nf.get_start_non_term()) {
+                    temp = "\"" + trim(left + " " + node.cur_term + " " + right) + "\"" +
+                        " -> \"" + trim(left + " "  + node.first + " " + node.second +
+                                                " " + right) + "\"";
+
+                } else {
+                    temp = ";\n\"" + trim(left + " " + node.cur_term + " " + right) + "\"" +
+                        " -> \"" + trim(left + " "  + node.first + " " + node.second +
+                                                " " + right) + "\"";
+                }
+
+                os.write(temp.c_str(), temp.size());
+                print_tree_node(os, i, node.k, node.first,
+                                left, node.second + right);
+                print_tree_node(os, node.k + 1, j, node.second,
+                                left + " " + node.first, right);
+            }
+        }
+    }
+
+    void print_tree(std::string path) {
+        std::ofstream os(path.c_str());
+        auto start_non_term = nf.get_start_non_term();
+        os.write("digraph {\n", 10);
+        print_tree_node(os, 0, (int) matrix.size() - 1, start_non_term, "", "");
+        os.write((" -> " + ("\"" + check + "\";\n")).c_str(), check.size() + 8);
+        os.write("}", 1);
         os.close();
     }
 
