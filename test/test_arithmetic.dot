@@ -1,4 +1,6 @@
 digraph {
 "E" -> "E A0";
-"E A0" -> "E A3 T" -> "2+2";
+"E A0" -> "E A3 T";
+"E A3 T" -> "E A3 T A2";
+"E A3 T A2" -> "E A3 T A5 F" -> "2+2*2";
 }

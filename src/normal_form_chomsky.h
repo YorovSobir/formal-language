@@ -89,7 +89,7 @@ struct normal_form_chomsky {
                 continue;
             }
             std::string key = p->first;
-            int i;
+            size_t i;
             for (i = 0; i < vec.size() - 2; ++i) {
                 std::string non_term = get_next_non_term();
                 rules.emplace(std::make_pair(key,
@@ -272,7 +272,7 @@ struct normal_form_chomsky {
             if (node.second.size() != 2) {
                 continue;
             }
-            for (int i = 0; i < node.second.size(); ++i) {
+            for (size_t i = 0; i < node.second.size(); ++i) {
                 if (node.second[i][0] == '\'') {
                     std::string non_term;
                     if (single_term.find(node.second[i]) == single_term.end()) {
