@@ -122,35 +122,41 @@ struct cyk_alg {
         os.close();
     }
 
-    void print_tree_node(std::ostream& os, int i, int j,
+    std::string print_tree_node(std::ostream& os, int i, int j,
                          std::string term, std::string left, std::string right) {
         if (i < 0 || j < 0) {
-            return;
+            return "";
         }
         for (auto& node: matrix[i][j]) {
             if (node.cur_term == term) {
-                if (node.k == -1) {
-                    continue;
-                }
                 std::string temp;
-                if (term == nf.get_start_non_term()) {
-                    temp = "\"" + trim(left + " " + node.cur_term + " " + right) + "\"" +
-                        " -> \"" + trim(left + " "  + node.first + " " + node.second +
-                                                " " + right) + "\"";
+                if (i == 0 && j == matrix.size() - 1) {
+                    temp = "\"" + node.cur_term + "\"" +
+                        " -> \"" + trim(node.first + " " + node.second) + "\"";
 
                 } else {
                     temp = ";\n\"" + trim(left + " " + node.cur_term + " " + right) + "\"" +
-                        " -> \"" + trim(left + " "  + node.first + " " + node.second +
+                        " -> \"" + trim(trim(left + " "  + node.first + " " + node.second) +
                                                 " " + right) + "\"";
                 }
-
                 os.write(temp.c_str(), temp.size());
-                print_tree_node(os, i, node.k, node.first,
-                                left, node.second + right);
-                print_tree_node(os, node.k + 1, j, node.second,
-                                left + " " + node.first, right);
+
+                if (node.k == -1) {
+                    return trim(temp.substr(temp.find("->") + 2));
+                }
+
+                std::string left_res = print_tree_node(os, i, node.k, node.first,
+                                left, trim(node.second + " " + right));
+                auto pos = left_res.find_last_of('\'');
+                if (pos == std::string::npos) {
+                    pos = 0;
+                }
+                std::string res = print_tree_node(os, node.k + 1, j, node.second,
+                                trim(left_res.substr(1, pos)), trim(right));
+                return res;
             }
         }
+        return "";
     }
 
     void print_tree(std::string path) {
@@ -158,8 +164,7 @@ struct cyk_alg {
         auto start_non_term = nf.get_start_non_term();
         os.write("digraph {\n", 10);
         print_tree_node(os, 0, (int) matrix.size() - 1, start_non_term, "", "");
-        os.write((" -> " + ("\"" + check + "\";\n")).c_str(), check.size() + 8);
-        os.write("}", 1);
+        os.write(";\n}", 3);
         os.close();
     }
 
