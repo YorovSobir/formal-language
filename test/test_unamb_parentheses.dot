@@ -3,5 +3,5 @@ digraph {
 "A2 A0" -> "A2 S A1";
 "A2 S A1" -> "A2 A2 A0 A1";
 "A2 A2 A0 A1" -> "A2 A2 A1 S A1";
-"A2 A2 A1 S A1" -> "A2 A2 A1 A2 A0 A1" -> "( ( ) ( ) ) ";
+"A2 A2 A1 S A1" -> "A2 A2 A1 A2 A0 A1" -> "(()())";
 }

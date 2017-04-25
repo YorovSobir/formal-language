@@ -1,3 +1,0 @@
-/home/yorov/spbau/formalLanguage/formal-language/bin/CMakeFiles/edit_cache.dir
-/home/yorov/spbau/formalLanguage/formal-language/bin/CMakeFiles/rebuild_cache.dir
-/home/yorov/spbau/formalLanguage/formal-language/bin/CMakeFiles/formal_language.dir

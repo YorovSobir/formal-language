@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/formal_language.dir/src/main.cpp.o  -o formal_language 

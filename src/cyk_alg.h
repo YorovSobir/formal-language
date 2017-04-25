@@ -14,34 +14,21 @@ struct cyk_alg {
         std::string temp;
         while (std::getline(ifs, temp)) {
             check.append(temp);
-            check.append(" ");
+            check.push_back(' ');
         }
+        check.pop_back();
         nf.normalize(gram);
     }
 
     void check_str() {
         auto rules = nf.get_rules();
         std::vector<std::string> str_vec;
-        size_t start = 0;
-        size_t end = 0;
-        for (size_t i = 0; i < check.size();) {
-            if (std::isspace(check[i])) {
-                std::string temp;
-                temp.push_back('\'');
-                temp.append(check.substr(start, end - start));
-                temp.push_back('\'');
-                str_vec.push_back(std::move(temp));
-                start = end + 1;
-                ++i;
-                while(i < check.size() && std::isspace(check[i])) {
-                    ++i;
-                    ++start;
-                }
-                end = start;
-                continue;
-            }
-            ++end;
-            ++i;
+        for (size_t i = 0; i < check.size(); ++i) {
+            std::string temp;
+            temp.push_back('\'');
+            temp.push_back(check[i]);
+            temp.push_back('\'');
+            str_vec.push_back(std::move(temp));
         }
 
         matrix.resize(str_vec.size(), std::vector<std::vector<cell>>(
