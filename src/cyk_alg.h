@@ -122,8 +122,8 @@ struct cyk_alg {
         os.close();
     }
 
-    std::string print_tree_node(std::ostream& os, int i, int j,
-                         std::string term, std::string left, std::string right) {
+    std::string print_output_tree(std::ostream &os, int i, int j,
+                                  std::string term, std::string left, std::string right) {
         if (i < 0 || j < 0) {
             return "";
         }
@@ -145,26 +145,63 @@ struct cyk_alg {
                     return trim(temp.substr(temp.find("->") + 2));
                 }
 
-                std::string left_res = print_tree_node(os, i, node.k, node.first,
-                                left, trim(node.second + " " + right));
+                std::string left_res = print_output_tree(os, i, node.k, node.first,
+                                                         left, trim(node.second + " " + right));
                 auto pos = left_res.find_last_of('\'');
                 if (pos == std::string::npos) {
                     pos = 0;
                 }
-                std::string res = print_tree_node(os, node.k + 1, j, node.second,
-                                trim(left_res.substr(1, pos)), trim(right));
+                std::string res = print_output_tree(os, node.k + 1, j, node.second,
+                                                    trim(left_res.substr(1, pos)), trim(right));
                 return res;
             }
         }
         return "";
     }
 
+    int print_tree_rec(int i, int j, std::string& term,
+                        std::vector<std::string>& res, int cur_node) {
+        for (auto& node: matrix[i][j]) {
+            if (node.cur_term == term) {
+                if (node.k == -1) {
+                    res.push_back("\"" "#" + std::to_string(cur_node) + " " + term + ": " +
+                                  check[i] + "\" -> " +
+                                  "\"" "#" + std::to_string(cur_node + 1) + " " +
+                                  check[i] + "\";\n");
+                    continue;
+                }
+                std::string left_res, right_res;
+                int left_node = cur_node + 1;
+                int right_node = print_tree_rec(i, node.k, node.first, res, left_node) + 1;
+                int last_node = print_tree_rec(node.k + 1, j, node.second, res, right_node);
+                std::string temp;
+                temp.append("\"" "#" + std::to_string(cur_node) + " " + term + ": " +
+                            check.substr((size_t)i, (size_t)(j - i + 1)) + "\" -> " +
+                           "\"" + "#" + std::to_string(left_node) + " " + node.first + ": " +
+                            check.substr((size_t)i, (size_t)node.k - i + 1) + "\";\n");
+                temp.append("\"" "#" + std::to_string(cur_node) + " " + term + ": " +
+                            check.substr((size_t)i, (size_t)j - i + 1) + "\" -> " +
+                           "\"" "#" + std::to_string(right_node) + " " + node.second + ": " +
+                            check.substr((size_t)node.k + 1, (size_t)j - node.k) + "\";\n");
+                res.push_back(std::move(temp));
+                return last_node;
+            }
+        }
+        return cur_node + 1;
+    }
+
     void print_tree(std::string path) {
         std::ofstream os(path.c_str());
         auto start_non_term = nf.get_start_non_term();
+        std::vector<std::string> res;
+        print_tree_rec(0, (int) matrix.size() - 1, start_non_term, res, 0);
+//        print_output_tree(os, 0, (int) matrix.size() - 1, start_non_term, "", "");
+
         os.write("digraph {\n", 10);
-        print_tree_node(os, 0, (int) matrix.size() - 1, start_non_term, "", "");
-        os.write(";\n}", 3);
+        for (auto rit = res.rbegin(); rit != res.rend(); ++rit) {
+            os.write(rit->c_str(), (*rit).size());
+        }
+        os.write("}", 1);
         os.close();
     }
 
