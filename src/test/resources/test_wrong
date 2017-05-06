@@ -3,4 +3,5 @@ if(x < 3) then
     begin
         y := 8;
         while(y > 3) do y := y - 1
+    end
     // missed end keyword

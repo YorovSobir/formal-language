@@ -1,0 +1,10 @@
+while(x > 3) do
+    begin
+        if(x == 3) then write(x) else x := x + 1
+        (* comment 1
+            (* comment 1.1
+                (* comment 1.1.1 *)
+            *)
+
+        *)
+    end
