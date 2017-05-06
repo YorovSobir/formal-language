@@ -20,6 +20,9 @@ public class ASTVisitor {
 
         dos.write("digraph {\n");
         ListIterator<String> it = tree.listIterator(tree.size());
+//        while (it.hasNext()) {
+//            dos.write(it.next());
+//        }
         while (it.hasPrevious()) {
             dos.write(it.previous());
         }
@@ -37,10 +40,10 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(left);
+        sb.append(right);
         sb.append(";\n");
         tree.add(sb.toString());
-        sb.replace(temp, sb.length(), right);
+        sb.replace(temp, sb.length(), left);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
@@ -56,10 +59,10 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(left);
+        sb.append(right);
         sb.append(";\n");
         tree.add(sb.toString());
-        sb.replace(temp, sb.length(), right);
+        sb.replace(temp, sb.length(), left);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
@@ -75,10 +78,10 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(left);
+        sb.append(right);
         sb.append(";\n");
         tree.add(sb.toString());
-        sb.replace(temp, sb.length(), right);
+        sb.replace(temp, sb.length(), left);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
@@ -99,10 +102,10 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(left);
+        sb.append(right);
         sb.append(";\n");
         tree.add(sb.toString());
-        sb.replace(temp, sb.length(), right);
+        sb.replace(temp, sb.length(), left);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
@@ -116,15 +119,15 @@ public class ASTVisitor {
     public String visitIf(IfStmtNode ifStmtNode) throws IOException {
         int curNodeNumber = nodeNumber;
         ++nodeNumber;
-        String exp = ifStmtNode.getIfexp().accept(this);
         String stmt1 = ifStmtNode.getStmt1().accept(this);
+        String exp = ifStmtNode.getIfexp().accept(this);
         String stmt2 = ifStmtNode.getStmt2().accept(this);
         StringBuilder sb = new StringBuilder();
         sb.append("\"#" + curNodeNumber + " if" + "\"");
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(stmt1);
+        sb.append(stmt2);
         sb.append(";\n");
         tree.add(sb.toString());
 
@@ -132,7 +135,7 @@ public class ASTVisitor {
         sb.append(";\n");
         tree.add(sb.toString());
 
-        sb.replace(temp, sb.length(), stmt2);
+        sb.replace(temp, sb.length(), stmt1);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
@@ -168,11 +171,11 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(exp);
+        sb.append(stmt);
         sb.append(";\n");
         tree.add(sb.toString());
 
-        sb.replace(temp, sb.length(), stmt);
+        sb.replace(temp, sb.length(), exp);
         sb.append(";\n");
         tree.add(sb.toString());
 
@@ -204,10 +207,10 @@ public class ASTVisitor {
         String res = sb.toString();
         sb.append(" -> ");
         int temp = sb.length();
-        sb.append(left);
+        sb.append(right);
         sb.append(";\n");
         tree.add(sb.toString());
-        sb.replace(temp, sb.length(), right);
+        sb.replace(temp, sb.length(), left);
         sb.append(";\n");
         tree.add(sb.toString());
         return res;
