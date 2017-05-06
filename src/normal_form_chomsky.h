@@ -28,16 +28,27 @@ std::string trim(const std::string& str) {
 
 struct normal_form_chomsky {
 
+    normal_form_chomsky(const char* path)
+    {
+        normalize(path);
+    }
+
     void normalize(const char* path) {
-        get_grammar(path);
+        read_grammar(path);
+        std::cout << "grammar before notmalize:\n";
+        print(std::cout);
         elim_long_rules();
         elim_eps_rules();
         elim_unit_rules();
         elim_non_generating();
         replace_term();
+        std::cout << "\n=======================================\n";
+        std::cout << "grammar after normalize:\n";
+        print(std::cout);
+        std::cout << "\n=======================================\n";
     }
 
-    void get_grammar(const char* path) {
+    void read_grammar(const char *path) {
         std::ifstream ifs(path);
         std::string line;
         std::getline(ifs, line);
@@ -330,6 +341,18 @@ struct normal_form_chomsky {
             os.write((node.second + "\n").c_str(), node.second.size() + 1);
         }
     }
+
+
+    std::vector<std::string> find_rule(const std::vector<std::string>& prod) {
+        std::vector<std::string> res;
+        for (auto& rule: rules) {
+            if (rule.second == prod) {
+                res.push_back(rule.first);
+            }
+        }
+        return res;
+    }
+
 private:
     std::multimap<std::string, std::vector<std::string>> rules;
     std::string start_non_term;

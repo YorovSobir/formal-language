@@ -1,0 +1,7 @@
+S
+S = 'a' S1 'c' | 'a' S 'c' | 'c' S1 'a' | 'c' S 'a' | 'g' S1 't' | 'g' S 't' | 't' S1 'g' | 't' S 'g'
+S1 = 'a' B B B 'c' | 'c' B B B 'a' | 'g' B B B 't' | 't' B B B 'g'
+B = 'a' B1 'c' | 'a' B 'c' | 'c' B1 'a' | 'c' B 'a' | 'g' B1 't' | 'g' B 't' | 't' B1 'g' | 't' B 'g'
+B1 = 'a' C 'c' | 'c' C 'a' | 'g' C 't' | 't' C 'g'
+C = T T | T T T | T T T T
+T = 'a' | 'c' | 'g' | 't'
