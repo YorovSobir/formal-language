@@ -15,3 +15,7 @@
 
 ## Run with random graph
 1. Run binary file and then input the count of vertex and edge. Result of algorithm write to file **result.txt**
+
+## Format of file with graph
+* first line two integers: **n m**, where n - number of vertex, m - number of edge
+* next **m** lines like: v u s, where v, u - vertexes, s - symbol from ['a', 'c', 'g', 't'].
