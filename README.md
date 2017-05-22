@@ -5,9 +5,9 @@
 
 ## How to run project
 1. mvn package
-2. mvn exec:java -Dexec.mainClass="Main" -Dexec.args="path to file"
-3. **bash tree.sh <path>.dot**, <path> - it is path to file (which you input above).
-4. open file <path>.dot.ps to see result
+2. mvn exec:java -Dexec.mainClass="ru.spbau.mit.fl.Main" -Dexec.args="path to file"
+3. **bash tree.sh \<path\>.dot**, \<path\> - it is path to file (which you input above).
+4. open file \<path\>.dot.ps to see result
 
 ## How to run tests
 1. mvn package
