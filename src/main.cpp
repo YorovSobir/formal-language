@@ -2,14 +2,10 @@
 #include "graph_analyze.h"
 
 int main(int argc, char** argv) {
-    if (argc <= 1) {
-        std::cout << "not enough args" << std::endl;
-        std::exit(-1);
-    }
     normal_form_chomsky nf("grammar/trna_grammar");
     graph g(nf);
     std::string output("result.txt");
-    if (std::string(argv[1]) == std::string("-file")) {
+    if (argc > 1 && std::string(argv[1]) == std::string("-file")) {
         if (argc < 4) {
             std::cout << "forget input and output file\n";
             std::exit(-1);
