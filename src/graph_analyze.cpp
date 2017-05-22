@@ -31,19 +31,13 @@ void graph::graph_generator(size_t vertex_count, size_t edge_count) {
 }
 
 
-void graph::print(const char* path) {
-    std::ofstream os(path);
-    std::string res("digraph {\n");
+void graph::print_graph(std::ostream &os, size_t vertex_count, size_t edge_count) {
+    os << vertex_count << " " << edge_count << std::endl;
     for (size_t i = 0; i < adjlist.size(); ++i) {
         for (auto& edge: adjlist[i]) {
-            res.append(std::to_string(i) + " -> "
-                       + std::to_string(edge.second)
-                       + " [label = \"" + edge.first + "\"];\n");
+            os << i << " " << edge.second << " " << edge.first << std::endl;
         }
     }
-    res.push_back('}');
-    os.write(res.c_str(), res.size());
-    os.close();
 }
 
 
@@ -76,14 +70,32 @@ graph::syntactic_analysis() {
                 }
             }
         }
+
         if (res.size() == old_size) {
             break;
         }
     }
 
+    std::string start_term = nf.get_start_non_term();
+    for (auto it = res.begin(); it != res.end();) {
+        if (std::get<2>(*it) != start_term) {
+            it = res.erase(it);
+        } else {
+            ++it;
+        }
+    }
     return res;
 }
 
+void graph::print_res(std::ostream& os,
+                      std::set<std::tuple<size_t, size_t, std::string>>& res) {
+    for (auto& t: res) {
+        os << "(" << std::get<0>(t)
+           << ", " << std::get<1>(t)
+           << ", " << std::get<2>(t)
+           << ")" << std::endl;
+    }
+}
 
 void graph::read_graph(const char* path) {
     std::ifstream is(path);
@@ -96,7 +108,7 @@ void graph::read_graph(const char* path) {
     for (size_t i = 0; i < edge_count; ++i) {
         size_t from, to;
         std::string edge;
-        is >> from >> edge >> to;
-        adjlist[from - 1].push_back(std::make_pair(edge, to - 1));
+        is >> from >> to >> edge;
+        adjlist[from].push_back(std::make_pair(edge, to));
     }
 }

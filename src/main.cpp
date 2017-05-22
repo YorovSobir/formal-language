@@ -2,19 +2,28 @@
 #include "graph_analyze.h"
 
 int main(int argc, char** argv) {
-    size_t vertex_count;
-    size_t edge_count;
-    std::cout << "input vertex and edge count\n";
-    std::cin >> vertex_count >> edge_count;
-    normal_form_chomsky nf("../test/trna_grammar");
-    graph g(nf);
-    g.graph_generator(vertex_count, edge_count);
-    g.print("../test/graph.dot");
-    auto res = g.syntactic_analysis();
-    for (auto& t: res) {
-        std::cout << "(" << std::get<0>(t)
-                  << ", " << std::get<1>(t)
-                  << ", " << std::get<2>(t)
-                  << ")" << std::endl;
+    if (argc <= 1) {
+        std::cout << "not enough args" << std::endl;
+        std::exit(-1);
     }
+    normal_form_chomsky nf("grammar/trna_grammar");
+    graph g(nf);
+    std::string output("result.txt");
+    if (std::string(argv[1]) == std::string("-file")) {
+        if (argc < 4) {
+            std::cout << "forget input and output file\n";
+            std::exit(-1);
+        }
+        g.read_graph(argv[2]);
+        output = argv[3];
+    } else {
+        size_t vertex_count;
+        size_t edge_count;
+        std::cout << "input vertex and edge count\n";
+        std::cin >> vertex_count >> edge_count;
+        g.graph_generator(vertex_count, edge_count);
+    }
+    std::ofstream os(output);
+    auto res = g.syntactic_analysis();
+    g.print_res(os, res);
 }
