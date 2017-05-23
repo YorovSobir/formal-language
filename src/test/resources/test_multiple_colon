@@ -1,0 +1,8 @@
+if (false)
+then
+    begin
+        write(x);
+        read(y);
+        if (x == y) then x := -1 else skip
+    end
+else skip

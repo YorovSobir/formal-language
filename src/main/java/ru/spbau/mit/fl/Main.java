@@ -15,7 +15,7 @@ public class Main {
             System.exit(-1);
         }
 
-//        File file = new File("src/test/resources/test_fall");
+//        File file = new File("src/test/resources/test_all");
         File file = new File(args[0]);
         CharStream inputCharStream = null;
         try {
